@@ -1,5 +1,5 @@
-name: untitled
-description: "A new Flutter project."
+name: GithubUsersApp
+description: "An app that enables you look out for Github users in Uganda"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -29,8 +29,9 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
-    sdk: flutter
-
+  http: ^1.2.1
+  provider: ^6.1.0
+#  share: ^2.0.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
