@@ -3,7 +3,6 @@ import '../models/user.dart';
 import '../services/api_service.dart';
 import '../widgets/user_card.dart';
 import '../widgets/navbar.dart';
-import '../widgets/pagination.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -15,10 +14,12 @@ class UsersPage extends StatefulWidget {
 class UsersPageState extends State<UsersPage> {
   List<User> _users = [];
   List<User> _filteredUsers = [];
-  int _currentPage = 1;
   bool _isLoading = false;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
   final int _perPage = 10;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -27,18 +28,54 @@ class UsersPageState extends State<UsersPage> {
     _searchController.addListener(() {
       _filterUsers(_searchController.text);
     });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        _fetchMoreUsers();
+      }
+    });
   }
 
-  Future<void> _fetchUsers({int page = 1}) async {
+  Future<void> _fetchUsers() async {
     setState(() {
       _isLoading = true;
     });
-    List<User> users = await ApiService().fetchUsers(page: page, perPage: _perPage);
+
+    try {
+      List<User> users = await ApiService().fetchUsers(page: _currentPage, perPage: _perPage);
+      setState(() {
+        _users = users;
+        _filteredUsers = users;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Handle error
+      print('Error fetching users: $e');
+    }
+  }
+
+  Future<void> _fetchMoreUsers() async {
+    if (_isLoadingMore) return;
     setState(() {
-      _users = users;
-      _filteredUsers = users;
-      _isLoading = false;
+      _isLoadingMore = true;
     });
+
+    try {
+      List<User> moreUsers = await ApiService().fetchUsers(page: ++_currentPage, perPage: _perPage);
+      setState(() {
+        _users.addAll(moreUsers);
+        _filteredUsers = _users;
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingMore = false;
+      });
+      // Handle error
+      print('Error fetching more users: $e');
+    }
   }
 
   void _filterUsers(String query) {
@@ -49,18 +86,6 @@ class UsersPageState extends State<UsersPage> {
     setState(() {
       _filteredUsers = filtered;
     });
-  }
-
-  void _goToPreviousPage() {
-    if (_currentPage > 1) {
-      _currentPage--;
-      _fetchUsers(page: _currentPage);
-    }
-  }
-
-  void _goToNextPage() {
-    _currentPage++;
-    _fetchUsers(page: _currentPage);
   }
 
   @override
@@ -89,6 +114,7 @@ class UsersPageState extends State<UsersPage> {
               decoration: const InputDecoration(
                 labelText: 'Search Users in Uganda',
                 border: OutlineInputBorder(),
+
               ),
             ),
           ),
@@ -96,18 +122,16 @@ class UsersPageState extends State<UsersPage> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-              itemCount: _filteredUsers.length,
+              controller: _scrollController,
+              itemCount: _filteredUsers.length + (_isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == _filteredUsers.length) {
+                  return const Center(child: CircularProgressIndicator());
+                }
                 return UserCard(user: _filteredUsers[index]);
               },
             ),
           ),
-          if (!_isLoading)
-            Pagination(
-              currentPage: _currentPage,
-              onPreviousPage: _goToPreviousPage,
-              onNextPage: _goToNextPage,
-            ),
         ],
       ),
       bottomNavigationBar: const NavBar(currentIndex: 0),

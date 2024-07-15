@@ -1,5 +1,3 @@
-// lib/services/api_service.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
@@ -17,6 +15,17 @@ class ApiService {
       return users;
     } else {
       throw Exception('Failed to load users');
+    }
+  }
+
+  Future<UserDetails> fetchUserDetails(String username) async {
+    final response = await http.get(Uri.parse('https://api.github.com/users/$username'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return UserDetails.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to load user details');
     }
   }
 }

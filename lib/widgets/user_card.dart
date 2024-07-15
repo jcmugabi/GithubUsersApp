@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../pages/user_details_page.dart';
 
 class UserCard extends StatelessWidget {
   final User user;
@@ -16,6 +17,14 @@ class UserCard extends StatelessWidget {
           backgroundImage: NetworkImage(user.avatarUrl),
         ),
         title: Text(user.login),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserDetailsPage(username: user.login),
+            ),
+          );
+        },
       ),
     );
   }
