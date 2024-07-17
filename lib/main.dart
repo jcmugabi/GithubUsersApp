@@ -1,8 +1,8 @@
-// lib/main.dart
-
+import 'package:GithubUsersApp/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'pages/users.dart';
-import 'pages/about.dart';
+// import 'presentation/screens/splash_screen.dart';
+import 'presentation/screens/users_screen.dart';
+import 'presentation/screens/user_details_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,14 +15,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Navigation Demo',
+      title: 'Github Users',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/users',
+      initialRoute: '/',
       routes: {
-        '/users': (context) => const UsersPage(),
-        '/about': (context) => const AboutPage(),
+        '/': (context) => const SplashScreen(),
+        '/users': (context) => const UsersScreen(),
+        '/userDetails': (context) => UserDetailsScreen(),
       },
     );
   }

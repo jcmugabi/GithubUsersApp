@@ -1,0 +1,33 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../../domain/entities/user.dart';
+import '../../domain/repositories/user_repository.dart';
+import '../models/github_user_model.dart';
+
+
+
+class UserRepositoryImpl implements UserRepository {
+  final String baseUrl = 'https://api.github.com';
+
+  @override
+  Future<List<User>> getUsers({required int page, required int perPage}) async {
+    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda&page=$page&per_page=$perPage'));
+    if (response.statusCode == 200) {
+      final List<dynamic> items = json.decode(response.body)['items'];
+      return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+  @override
+  Future<User> getUserDetails(String username) async {
+    final response = await http.get(Uri.parse('$baseUrl/users/$username'));
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> userJson = json.decode(response.body);
+      return GithubUserModel.fromJson(userJson).toEntity();
+    } else {
+      throw Exception('Failed to load user details');
+    }
+  }
+}

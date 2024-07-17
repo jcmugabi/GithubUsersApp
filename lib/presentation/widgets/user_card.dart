@@ -1,8 +1,6 @@
-// lib/widgets/user_card.dart
-
 import 'package:flutter/material.dart';
-import '../models/user.dart';
-import '../pages/user_details_page.dart';
+import '../../domain/entities/user.dart';
+import '../theme/styles.dart';
 
 class UserCard extends StatelessWidget {
   final User user;
@@ -16,15 +14,7 @@ class UserCard extends StatelessWidget {
         leading: CircleAvatar(
           backgroundImage: NetworkImage(user.avatarUrl),
         ),
-        title: Text(user.login),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UserDetailsPage(username: user.login),
-            ),
-          );
-        },
+        title: Text(user.login, style: AppStyles.bodyText),
       ),
     );
   }
