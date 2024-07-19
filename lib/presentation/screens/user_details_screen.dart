@@ -24,12 +24,11 @@ class UserDetailsScreen extends StatelessWidget {
             icon: const Icon(Icons.share),
             onPressed: () async {
               final User user = await getUserDetailsUseCase(username);
-              Share.share(' ${user.login}, ${user.avatarUrl}');
+              Share.share('Check out this GitHub user: ${user.login}, ${user.avatarUrl}');
             },
           ),
         ],
       ),
-
       body: FutureBuilder<User>(
         future: getUserDetailsUseCase(username),
         builder: (context, snapshot) {
@@ -45,15 +44,45 @@ class UserDetailsScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(user.avatarUrl),
-                  radius: 50,
+                Center(
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(user.avatarUrl),
+                    radius: 50,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    user.login,
+                    style: AppStyles.headline,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  user.login,
-                  style: AppStyles.headline,
+                  'Name: ${user.name}',
+                  // style: AppStyles.subhead,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Followers: ${user.followers}',
+                  // style: AppStyles.subhead,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Following: ${user.following}',
+                  // style: AppStyles.subhead,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Type: ${user.type}',
+                  // style: AppStyles.subhead,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Bio: ${user.bio}',
+                  // style: AppStyles.subhead,
                 ),
               ],
             ),

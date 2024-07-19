@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/user.dart';
 import '../theme/styles.dart';
 
+// Widget to display user information in a card format.
 class UserCard extends StatelessWidget {
   final User user;
 

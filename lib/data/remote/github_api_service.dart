@@ -1,6 +1,7 @@
 import '../github_api_client.dart';
 import '../models/github_user_model.dart';
 
+// Service to fetch data from the GitHub API.
 class GithubApiService {
   final GithubApiClient apiClient;
 

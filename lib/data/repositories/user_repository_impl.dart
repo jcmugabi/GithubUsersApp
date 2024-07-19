@@ -4,14 +4,12 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../models/github_user_model.dart';
 
-
-
 class UserRepositoryImpl implements UserRepository {
   final String baseUrl = 'https://api.github.com';
 
   @override
-  Future<List<User>> getUsers({required int page, required int perPage}) async {
-    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda&page=$page&per_page=$perPage'));
+  Future<List<User>> getUsers({required int page, required int perPage, String? query}) async {
+    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda${query != null ? '+$query' : ''}&page=$page&per_page=$perPage'));
     if (response.statusCode == 200) {
       final List<dynamic> items = json.decode(response.body)['items'];
       return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();

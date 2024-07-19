@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/get_users_usecase.dart';
+import '../../data/repositories/user_repository_impl.dart';
 import '../theme/styles.dart';
 import '../widgets/user_card.dart';
-import '../widgets/pagination.dart';
-import '../../data/repositories/user_repository_impl.dart';
+import '../state/users_paging_controller.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -14,58 +15,27 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  final GetUsersUseCase getUsersUseCase = GetUsersUseCase(
-    repository: UserRepositoryImpl(),
-  );
-
-  List<User> _users = [];
-  List<User> _filteredUsers = [];
-  int _currentPage = 1;
-  bool _isLoading = false;
-  final int _perPage = 15;
+  late UsersPagingController _usersPagingController;
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+    _usersPagingController = UsersPagingController(
+      getUsersUseCase: GetUsersUseCase(
+        repository: UserRepositoryImpl(),
+      ),
+    );
     _searchController.addListener(() {
-      _filterUsers(_searchController.text);
+      _usersPagingController.updateSearchQuery(_searchController.text);
     });
   }
 
-  Future<void> _fetchUsers({int page = 1}) async {
-    setState(() {
-      _isLoading = true;
-    });
-    List<User> users = await getUsersUseCase(page: page, perPage: _perPage);
-    setState(() {
-      _users = users;
-      _filteredUsers = users;
-      _isLoading = false;
-    });
-  }
-
-  void _filterUsers(String query) {
-    List<User> filtered = _users
-        .where((user) => user.login.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    setState(() {
-      _filteredUsers = filtered;
-    });
-  }
-
-  void _goToPreviousPage() {
-    if (_currentPage > 1) {
-      _currentPage--;
-      _fetchUsers(page: _currentPage);
-    }
-  }
-
-  void _goToNextPage() {
-    _currentPage++;
-    _fetchUsers(page: _currentPage);
+  @override
+  void dispose() {
+    _usersPagingController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _onUserTap(User user) {
@@ -106,24 +76,21 @@ class _UsersScreenState extends State<UsersScreen> {
             ),
           ),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-              itemCount: _filteredUsers.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => _onUserTap(_filteredUsers[index]),
-                  child: UserCard(user: _filteredUsers[index]),
-                );
-              },
+            child: Scrollbar(
+              thumbVisibility: true,
+              thickness: 6.0,
+              radius: Radius.circular(10),
+              child: PagedListView<int, User>(
+                pagingController: _usersPagingController.pagingController,
+                builderDelegate: PagedChildBuilderDelegate<User>(
+                  itemBuilder: (context, user, index) => GestureDetector(
+                    onTap: () => _onUserTap(user),
+                    child: UserCard(user: user),
+                  ),
+                ),
+              ),
             ),
           ),
-          if (!_isLoading)
-            Pagination(
-              currentPage: _currentPage,
-              onPreviousPage: _goToPreviousPage,
-              onNextPage: _goToNextPage,
-            ),
         ],
       ),
     );

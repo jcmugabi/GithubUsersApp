@@ -1,11 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// Class to handle raw HTTP requests to the GitHub API.
 class GithubApiClient {
   final String baseUrl;
 
   GithubApiClient({required this.baseUrl});
 
+  // Method to perform GET request.
   Future<Map<String, dynamic>> fetchUsers(int page, int perPage) async {
     final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda&page=$page&per_page=$perPage'));
 
