@@ -13,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, '/users');
     });
   }
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
         color: AppColors.primaryColor,
         child: const Center(
           child: Text(
-            'Welcome to Github Users',
+            'Github Users',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

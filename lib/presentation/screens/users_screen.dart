@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
-import '../../domain/usecases/get_users_usecase.dart';
-import '../../domain/usecases/filter_users_by_type_usecase.dart';
-import '../../data/repositories/user_repository_impl.dart';
-import '../theme/styles.dart';
+// import '../theme/styles.dart';
 import '../widgets/user_card.dart';
-import '../state/users_paging_controller.dart';
-import '../widgets/filter_button.dart'; // Import the FilterButton widget
-import '../widgets/filter_dropdown.dart'; // Import the FilterDropdown widget
+import '../widgets/no_internet_dialog.dart';
+import '../state/providers/connectivity_provider.dart';
+import '../state/providers/users_paging_controller_provider.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -18,30 +16,29 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  late UsersPagingController _usersPagingController;
   final TextEditingController _searchController = TextEditingController();
-  String _filterSelection = 'All'; // State variable to store the filter selection
 
   @override
   void initState() {
     super.initState();
-    _usersPagingController = UsersPagingController(
-      getUsersUseCase: GetUsersUseCase(
-        repository: UserRepositoryImpl(),
-      ),
-      filterUsersByTypeUseCase: FilterUsersByTypeUseCase(
-        repository: UserRepositoryImpl(),
-      ),
-    );
+    // Listen for connectivity changes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: true);
+      connectivityProvider.addListener(_checkConnectivity);
+    });
     _searchController.addListener(() {
-      _usersPagingController.updateSearchQuery(_searchController.text, _filterSelection);
+      final usersPagingController = Provider.of<UsersPagingControllerProvider>(context, listen: false);
+      usersPagingController.pagingController.refresh();
     });
   }
 
   @override
   void dispose() {
-    _usersPagingController.dispose();
     _searchController.dispose();
+    super.dispose();
+
+    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+    connectivityProvider.removeListener(_checkConnectivity);
     super.dispose();
   }
 
@@ -53,15 +50,30 @@ class _UsersScreenState extends State<UsersScreen> {
     );
   }
 
-  void _onFilterChanged(String? filterType) {
-    setState(() {
-      _filterSelection = filterType ?? 'All';
-      _usersPagingController.updateSearchQuery(_searchController.text, _filterSelection);
-    });
+  void _checkConnectivity() {
+    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+    if (!connectivityProvider.isConnected) {
+      showDialog(
+        context: context,
+        builder: (context) => const NoInternetDialog(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final connectivityProvider = Provider.of<ConnectivityProvider>(context);
+    final usersPagingController = Provider.of<UsersPagingControllerProvider>(context);
+
+    if (!connectivityProvider.isConnected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (context) => const NoInternetDialog(),
+        );
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -82,22 +94,13 @@ class _UsersScreenState extends State<UsersScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                FilterButton(),
-              ],
-            ),
-          ),
           Expanded(
             child: Scrollbar(
               thumbVisibility: true,
               thickness: 6.0,
-              radius: Radius.circular(10),
+              radius: const Radius.circular(10),
               child: PagedListView<int, User>(
-                pagingController: _usersPagingController.pagingController,
+                pagingController: usersPagingController.pagingController,
                 builderDelegate: PagedChildBuilderDelegate<User>(
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
@@ -106,9 +109,6 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
               ),
             ),
-          ),
-          FilterDropdown(
-            onChanged: _onFilterChanged,
           ),
         ],
       ),
