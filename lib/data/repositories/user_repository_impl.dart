@@ -8,8 +8,9 @@ class UserRepositoryImpl implements UserRepository {
   final String baseUrl = 'https://api.github.com';
 
   @override
-  Future<List<User>> getUsers({required int page, required int perPage, String? query}) async {
-    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda${query != null ? '+$query' : ''}&page=$page&per_page=$perPage'));
+  Future<List<User>> getUsers({required int page, required int perPage, String? query, String? filterType}) async {
+    final typeFilter = (filterType != null && filterType != 'All') ? '+type:$filterType' : '';
+    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda$typeFilter&page=$page&per_page=$perPage${query != null ? '&q=$query' : ''}'));
     if (response.statusCode == 200) {
       final List<dynamic> items = json.decode(response.body)['items'];
       return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();
@@ -26,6 +27,17 @@ class UserRepositoryImpl implements UserRepository {
       return GithubUserModel.fromJson(userJson).toEntity();
     } else {
       throw Exception('Failed to load user details');
+    }
+  }
+
+  @override
+  Future<List<User>> filterUsersByType({required String type, required int page, required int perPage}) async {
+    final response = await http.get(Uri.parse('$baseUrl/search/users?q=type:$type+location:uganda&page=$page&per_page=$perPage'));
+    if (response.statusCode == 200) {
+      final List<dynamic> items = json.decode(response.body)['items'];
+      return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();
+    } else {
+      throw Exception('Failed to load filtered users');
     }
   }
 }

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/get_users_usecase.dart';
+import '../../domain/usecases/filter_users_by_type_usecase.dart';
 import '../../data/repositories/user_repository_impl.dart';
 import '../theme/styles.dart';
 import '../widgets/user_card.dart';
 import '../state/users_paging_controller.dart';
+import '../widgets/filter_button.dart'; // Import the FilterButton widget
+import '../widgets/filter_dropdown.dart'; // Import the FilterDropdown widget
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -17,6 +20,7 @@ class UsersScreen extends StatefulWidget {
 class _UsersScreenState extends State<UsersScreen> {
   late UsersPagingController _usersPagingController;
   final TextEditingController _searchController = TextEditingController();
+  String _filterSelection = 'All'; // State variable to store the filter selection
 
   @override
   void initState() {
@@ -25,9 +29,12 @@ class _UsersScreenState extends State<UsersScreen> {
       getUsersUseCase: GetUsersUseCase(
         repository: UserRepositoryImpl(),
       ),
+      filterUsersByTypeUseCase: FilterUsersByTypeUseCase(
+        repository: UserRepositoryImpl(),
+      ),
     );
     _searchController.addListener(() {
-      _usersPagingController.updateSearchQuery(_searchController.text);
+      _usersPagingController.updateSearchQuery(_searchController.text, _filterSelection);
     });
   }
 
@@ -46,6 +53,13 @@ class _UsersScreenState extends State<UsersScreen> {
     );
   }
 
+  void _onFilterChanged(String? filterType) {
+    setState(() {
+      _filterSelection = filterType ?? 'All';
+      _usersPagingController.updateSearchQuery(_searchController.text, _filterSelection);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,21 +72,23 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Users',
-              style: AppStyles.headline,
-            ),
-          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
                 labelText: 'Search Users in Uganda',
                 border: OutlineInputBorder(),
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                FilterButton(),
+              ],
             ),
           ),
           Expanded(
@@ -90,6 +106,9 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
               ),
             ),
+          ),
+          FilterDropdown(
+            onChanged: _onFilterChanged,
           ),
         ],
       ),
