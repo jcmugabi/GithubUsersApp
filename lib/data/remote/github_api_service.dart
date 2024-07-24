@@ -19,4 +19,12 @@ class GithubApiService {
 
     return GithubUserModel.fromJson(response);
   }
+
+
+  Future<List<GithubUserModel>> searchUsers({required String query, required int page, required int perPage}) async {
+    final response = await apiClient.searchUsers(query, page, perPage);
+    final items = response['items'] as List;
+
+    return items.map((item) => GithubUserModel.fromJson(item)).toList();
+  }
 }

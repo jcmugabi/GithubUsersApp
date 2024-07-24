@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/user.dart';
-import '../../domain/usecases/get_user_details_usecase.dart';
-import '../../data/repositories/user_repository_impl.dart';
-import '../theme/styles.dart';
-import 'package:share/share.dart';
-import '../state/providers/connectivity_provider.dart';
-import '../widgets/no_internet_dialog.dart';
+import '../state/providers/internet_connection_provider.dart';
+import '../state/providers/user_details_provider.dart';
 
 class UserDetailsScreen extends StatefulWidget {
-  final GetUserDetailsUseCase getUserDetailsUseCase = GetUserDetailsUseCase(
-    repository: UserRepositoryImpl(),
-  );
-
-  UserDetailsScreen({super.key});
+  const UserDetailsScreen({super.key});
 
   @override
   _UserDetailsScreenState createState() => _UserDetailsScreenState();
@@ -23,33 +16,36 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    // Listen for connectivity changes
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: true);
+      final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
       connectivityProvider.addListener(_checkConnectivity);
     });
   }
 
   @override
   void dispose() {
-    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
     connectivityProvider.removeListener(_checkConnectivity);
     super.dispose();
   }
 
   void _checkConnectivity() {
-    final connectivityProvider = Provider.of<ConnectivityProvider>(context, listen: false);
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => const NoInternetDialog(),
+        builder: (context) => connectivityProvider.getFeedbackCard(),
       );
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final String username = ModalRoute.of(context)?.settings.arguments as String;
+    final userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Details'),
@@ -57,19 +53,22 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () async {
-              final User user = await widget.getUserDetailsUseCase(username);
-              Share.share('Check out this GitHub user: ${user.login}, ${user.avatarUrl}');
+              final userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+              final user = await userDetailsProvider.fetchUserDetails(username);
+              if (user != null) {
+                Share.share('Check out this GitHub user: github.com/${user.login}');
+              }
             },
           ),
         ],
       ),
-      body: FutureBuilder<User>(
-        future: widget.getUserDetailsUseCase(username),
+        body: FutureBuilder<User?>(
+        future: userDetailsProvider.fetchUserDetails(username),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: NoInternetDialog());
+            return const Center(child: Text('Error loading user details'));
           } else if (!snapshot.hasData) {
             return const Center(child: Text('User not found'));
           }
@@ -90,7 +89,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 Center(
                   child: Text(
                     user.login,
-                    style: AppStyles.headline,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 16),

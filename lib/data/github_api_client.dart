@@ -27,4 +27,14 @@ class GithubApiClient {
       throw Exception('Failed to load user details');
     }
   }
+
+  Future<Map<String, dynamic>> searchUsers(String query, int page, int perPage) async {
+    final response = await http.get(Uri.parse('$baseUrl/search/users?q=$query+location:uganda&page=$page&per_page=$perPage'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to search users');
+    }
+  }
 }
