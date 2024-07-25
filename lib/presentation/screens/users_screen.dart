@@ -31,7 +31,7 @@ class _UsersScreenState extends State<UsersScreen> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
+      final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
       connectivityProvider.addListener(_checkConnectivity);
 
       if (!connectivityProvider.isConnected) {
@@ -70,6 +70,7 @@ class _UsersScreenState extends State<UsersScreen> {
   Widget build(BuildContext context) {
     final infiniteScrollProvider = Provider.of<InfiniteScrollProvider>(context);
     final searchProvider = Provider.of<SearchProvider>(context);
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -105,6 +106,11 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
+          if (!connectivityProvider.isConnected) // Displaying the connectivity status
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: connectivityProvider.getFeedbackCard(),
+            ),
           Expanded(
             child: Scrollbar(
               thumbVisibility: true,

@@ -15,13 +15,13 @@ class InternetConnectionProvider with ChangeNotifier {
   bool get isConnected => _isConnected;
 
   Widget getFeedbackCard() {
-    return _isConnected
-        ? Container()
-        : const Card(
+    return !_isConnected
+        ? const Card(
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Text('No internet connection'),
       ),
-    );
+    )
+        : Container();
   }
 }

@@ -48,15 +48,4 @@ class UserRepositoryImpl implements UserRepository {
       throw Exception('Failed to load users');
     }
   }
-//   @override
-//   Future<List<User>> searchUsers(String query, {required int page, required int perPage}) async {
-//     final response = await http.get(Uri.parse(
-//         '$baseUrl/search/users?q=$query&page=$page&per_page=$perPage'));
-//     if (response.statusCode == 200) {
-//       final List<dynamic> items = json.decode(response.body)['items'];
-//       return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();
-//     } else {
-//       throw Exception('Failed to load users');
-//     }
-//   }
 }

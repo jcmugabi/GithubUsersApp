@@ -45,6 +45,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Widget build(BuildContext context) {
     final String username = ModalRoute.of(context)?.settings.arguments as String;
     final userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -79,6 +80,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (!connectivityProvider.isConnected)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: connectivityProvider.getFeedbackCard(),
+                  ),
                 Center(
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(user.avatarUrl),

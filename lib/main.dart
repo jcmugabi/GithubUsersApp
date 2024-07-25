@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../presentation/state/providers/search_provider.dart';
 import '../../../presentation/state/providers/internet_connection_provider.dart';
 import '../../../presentation/state/providers/user_details_provider.dart';
-import '../../../presentation/state/providers/users_provider.dart';
 import '../../../presentation/state/providers/infinite_scroll_provider.dart';
 import '../../../presentation/screens/splash_screen.dart';
 import '../../../presentation/screens/users_screen.dart';
@@ -11,7 +10,6 @@ import '../../../presentation/screens/user_details_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../domain/usecases/get_user_details_usecase.dart';
 import '../../../domain/usecases/get_users_usecase.dart';
-// import '../../../domain/usecases/search_users_usecase.dart';
 import '../../../data/repositories/user_repository_impl.dart';
 import '../../../domain/usecases/search_users_usecase.dart';
 
@@ -33,9 +31,6 @@ void main() {
         ChangeNotifierProvider(create: (_) => InternetConnectionProvider(Connectivity())),
         ChangeNotifierProvider(create: (_) => UserDetailsProvider(
           getUserDetailsUseCase: GetUserDetailsUseCase(repository: UserRepositoryImpl()),
-        )),
-        ChangeNotifierProvider(create: (_) => UsersProvider(
-          getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl()),
         )),
         ChangeNotifierProvider(create: (_) => InfiniteScrollProvider(
           getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl()),
