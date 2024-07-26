@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/colours.dart';
-import '../theme/colours.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,7 +12,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, '/users');
     });
   }
@@ -24,13 +23,26 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         color: AppColors.primaryColor,
         child: const Center(
-          child: Text(
-            'Welcome to Github Users',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Github Users',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Everywhere!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+            ],
           ),
         ),
       ),

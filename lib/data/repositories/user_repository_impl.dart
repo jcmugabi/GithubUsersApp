@@ -4,17 +4,22 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../models/github_user_model.dart';
 
-
-
 class UserRepositoryImpl implements UserRepository {
   final String baseUrl = 'https://api.github.com';
 
   @override
-  Future<List<User>> getUsers({required int page, required int perPage}) async {
-    final response = await http.get(Uri.parse('$baseUrl/search/users?q=location:uganda&page=$page&per_page=$perPage'));
+  Future<List<User>> getUsers(
+      {required int page, required int perPage, String? query, String? filterType}) async {
+    final typeFilter = (filterType != null && filterType != 'All')
+        ? '+type:$filterType'
+        : '';
+    final response = await http.get(Uri.parse(
+        '$baseUrl/search/users?q=location:$query&$typeFilter&page=$page&per_page=$perPage${query !=
+            null ? '&q=$query' : ''}'));
     if (response.statusCode == 200) {
       final List<dynamic> items = json.decode(response.body)['items'];
-      return items.map((item) => GithubUserModel.fromJson(item).toEntity()).toList();
+      return items.map((item) => GithubUserModel.fromJson(item).toEntity())
+          .toList();
     } else {
       throw Exception('Failed to load users');
     }
@@ -28,6 +33,19 @@ class UserRepositoryImpl implements UserRepository {
       return GithubUserModel.fromJson(userJson).toEntity();
     } else {
       throw Exception('Failed to load user details');
+    }
+  }
+
+  @override
+  Future<List<User>> searchUsers(String query) async {
+    final response = await http.get(
+        Uri.parse('$baseUrl/search/users?q=$query'));
+    if (response.statusCode == 200) {
+      final List<dynamic> items = json.decode(response.body)['items'];
+      return items.map((item) => GithubUserModel.fromJson(item).toEntity())
+          .toList();
+    } else {
+      throw Exception('Failed to load users');
     }
   }
 }

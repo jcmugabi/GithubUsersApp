@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'colours.dart';
 
+// Defines text and widget styles used throughout the app.
 class AppStyles {
   static const TextStyle headline = TextStyle(
     fontSize: 24,

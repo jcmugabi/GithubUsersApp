@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
-import '../../domain/usecases/get_users_usecase.dart';
-import '../theme/styles.dart';
 import '../widgets/user_card.dart';
-import '../widgets/pagination.dart';
-import '../../data/repositories/user_repository_impl.dart';
+import '../state/providers/internet_connection_provider.dart';
+import '../state/providers/search_provider.dart';
+import '../state/providers/infinite_scroll_provider.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -14,58 +15,47 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  final GetUsersUseCase getUsersUseCase = GetUsersUseCase(
-    repository: UserRepositoryImpl(),
-  );
-
-  List<User> _users = [];
-  List<User> _filteredUsers = [];
-  int _currentPage = 1;
-  bool _isLoading = false;
-  final int _perPage = 15;
   final TextEditingController _searchController = TextEditingController();
+  bool isSearching = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+
     _searchController.addListener(() {
-      _filterUsers(_searchController.text);
+      final searchProvider = Provider.of<SearchProvider>(context, listen: false);
+      searchProvider.updateSearchQuery(_searchController.text);
+      setState(() {
+        isSearching = _searchController.text.isNotEmpty;
+      });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
+      connectivityProvider.addListener(_checkConnectivity);
+
+      if (!connectivityProvider.isConnected) {
+        _checkConnectivity();
+      }
     });
   }
 
-  Future<void> _fetchUsers({int page = 1}) async {
-    setState(() {
-      _isLoading = true;
-    });
-    List<User> users = await getUsersUseCase(page: page, perPage: _perPage);
-    setState(() {
-      _users = users;
-      _filteredUsers = users;
-      _isLoading = false;
-    });
+  @override
+  void dispose() {
+    _searchController.dispose();
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
+    connectivityProvider.removeListener(_checkConnectivity);
+    super.dispose();
   }
 
-  void _filterUsers(String query) {
-    List<User> filtered = _users
-        .where((user) => user.login.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    setState(() {
-      _filteredUsers = filtered;
-    });
-  }
-
-  void _goToPreviousPage() {
-    if (_currentPage > 1) {
-      _currentPage--;
-      _fetchUsers(page: _currentPage);
+  void _checkConnectivity() {
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
+    if (!connectivityProvider.isConnected) {
+      showDialog(
+        context: context,
+        builder: (context) => connectivityProvider.getFeedbackCard(),
+      );
     }
-  }
-
-  void _goToNextPage() {
-    _currentPage++;
-    _fetchUsers(page: _currentPage);
   }
 
   void _onUserTap(User user) {
@@ -78,52 +68,80 @@ class _UsersScreenState extends State<UsersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final infiniteScrollProvider = Provider.of<InfiniteScrollProvider>(context);
+    final searchProvider = Provider.of<SearchProvider>(context);
+    final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Github Users',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF000080), // Navy Blue
+        backgroundColor: const Color(0xFF000080),
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Users',
-              style: AppStyles.headline,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      labelText: 'Search by user name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    searchProvider.clearSearch();
+                    infiniteScrollProvider.pagingController.refresh();
+                  },
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search Users in Uganda',
-                border: OutlineInputBorder(),
+          if (!connectivityProvider.isConnected)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: connectivityProvider.getFeedbackCard(),
+            ),
+          Expanded(
+            child: Scrollbar(
+              thumbVisibility: true,
+              thickness: 6.0,
+              radius: const Radius.circular(10),
+              child: isSearching
+                  ? searchProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : searchProvider.users.isEmpty
+                  ? const Center(child: Text('No users found'))
+                  : ListView.builder(
+                itemCount: searchProvider.users.length,
+                itemBuilder: (context, index) {
+                  final user = searchProvider.users[index];
+                  return GestureDetector(
+                    onTap: () => _onUserTap(user),
+                    child: UserCard(user: user),
+                  );
+                },
+              )
+                  : PagedListView<int, User>(
+                pagingController: infiniteScrollProvider.pagingController,
+                builderDelegate: PagedChildBuilderDelegate<User>(
+                  itemBuilder: (context, user, index) => GestureDetector(
+                    onTap: () => _onUserTap(user),
+                    child: UserCard(user: user),
+                  ),
+                ),
               ),
             ),
           ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-              itemCount: _filteredUsers.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => _onUserTap(_filteredUsers[index]),
-                  child: UserCard(user: _filteredUsers[index]),
-                );
-              },
-            ),
-          ),
-          if (!_isLoading)
-            Pagination(
-              currentPage: _currentPage,
-              onPreviousPage: _goToPreviousPage,
-              onNextPage: _goToNextPage,
-            ),
         ],
       ),
     );
