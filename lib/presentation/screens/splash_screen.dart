@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/colours.dart';
-// import '../theme/colours.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: AppColors.backgroundColor,
                 ),
               ),
-              SizedBox(height: 16), // Add spacing between texts
+              SizedBox(height: 16),
               Text(
                 'Everywhere!',
                 style: TextStyle(

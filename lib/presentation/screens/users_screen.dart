@@ -78,7 +78,7 @@ class _UsersScreenState extends State<UsersScreen> {
           'Github Users',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF000080), // Navy Blue
+        backgroundColor: const Color(0xFF000080),
       ),
       body: Column(
         children: [
@@ -106,7 +106,7 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-          if (!connectivityProvider.isConnected) // Displaying the connectivity status
+          if (!connectivityProvider.isConnected)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: connectivityProvider.getFeedbackCard(),

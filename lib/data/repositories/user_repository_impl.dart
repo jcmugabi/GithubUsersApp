@@ -39,7 +39,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<List<User>> searchUsers(String query) async {
     final response = await http.get(
-        Uri.parse('https://api.github.com/search/users?q=$query'));
+        Uri.parse('$baseUrl/search/users?q=$query'));
     if (response.statusCode == 200) {
       final List<dynamic> items = json.decode(response.body)['items'];
       return items.map((item) => GithubUserModel.fromJson(item).toEntity())

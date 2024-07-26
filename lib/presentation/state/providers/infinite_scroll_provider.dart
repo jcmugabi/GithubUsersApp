@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/usecases/get_users_usecase.dart';
-// import '../../widgets/no_internet_dialog.dart';
 
 class InfiniteScrollProvider with ChangeNotifier {
   final GetUsersUseCase _getUsersUseCase;
