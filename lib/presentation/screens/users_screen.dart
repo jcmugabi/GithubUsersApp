@@ -15,19 +15,47 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  bool isSearching = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  bool isSearchingByUsername = false;
+  bool isSearchingByLocation = false;
 
   @override
   void initState() {
     super.initState();
 
-    _searchController.addListener(() {
+    _usernameController.addListener(() {
       final searchProvider = Provider.of<SearchProvider>(context, listen: false);
-      searchProvider.updateSearchQuery(_searchController.text);
-      setState(() {
-        isSearching = _searchController.text.isNotEmpty;
-      });
+      if (_usernameController.text.isNotEmpty) {
+        _locationController.clear();
+        searchProvider.updateSearchQuery(_usernameController.text, byLocation: false);
+        setState(() {
+          isSearchingByUsername = true;
+          isSearchingByLocation = false;
+        });
+      } else {
+        searchProvider.clearSearch();
+        setState(() {
+          isSearchingByUsername = false;
+        });
+      }
+    });
+
+    _locationController.addListener(() {
+      final searchProvider = Provider.of<SearchProvider>(context, listen: false);
+      if (_locationController.text.isNotEmpty) {
+        _usernameController.clear();
+        searchProvider.updateSearchQuery(_locationController.text, byLocation: true);
+        setState(() {
+          isSearchingByLocation = true;
+          isSearchingByUsername = false;
+        });
+      } else {
+        searchProvider.clearSearch();
+        setState(() {
+          isSearchingByLocation = false;
+        });
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -42,7 +70,8 @@ class _UsersScreenState extends State<UsersScreen> {
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _usernameController.dispose();
+    _locationController.dispose();
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
     connectivityProvider.removeListener(_checkConnectivity);
     super.dispose();
@@ -88,9 +117,19 @@ class _UsersScreenState extends State<UsersScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _searchController,
+                    controller: _usernameController,
                     decoration: const InputDecoration(
-                      labelText: 'Search by user name',
+                      labelText: 'Search by username',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: TextField(
+                    controller: _locationController,
+                    decoration: const InputDecoration(
+                      labelText: 'Search by location',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -98,9 +137,9 @@ class _UsersScreenState extends State<UsersScreen> {
                 IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    _searchController.clear();
+                    _usernameController.clear();
+                    _locationController.clear();
                     searchProvider.clearSearch();
-                    infiniteScrollProvider.pagingController.refresh();
                   },
                 ),
               ],
@@ -116,8 +155,7 @@ class _UsersScreenState extends State<UsersScreen> {
               thumbVisibility: true,
               thickness: 6.0,
               radius: const Radius.circular(10),
-              child: isSearching
-                  ? searchProvider.isLoading
+              child: searchProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : searchProvider.users.isEmpty
                   ? const Center(child: Text('No users found'))
@@ -130,15 +168,6 @@ class _UsersScreenState extends State<UsersScreen> {
                     child: UserCard(user: user),
                   );
                 },
-              )
-                  : PagedListView<int, User>(
-                pagingController: infiniteScrollProvider.pagingController,
-                builderDelegate: PagedChildBuilderDelegate<User>(
-                  itemBuilder: (context, user, index) => GestureDetector(
-                    onTap: () => _onUserTap(user),
-                    child: UserCard(user: user),
-                  ),
-                ),
               ),
             ),
           ),

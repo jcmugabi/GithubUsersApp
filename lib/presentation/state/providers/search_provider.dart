@@ -1,20 +1,27 @@
-// this 2 ........
 import 'package:flutter/material.dart';
 import '../../../domain/entities/user.dart';
 import '../../../domain/usecases/search_users_usecase.dart';
 import '../../../domain/usecases/get_users_usecase.dart';
+import '../../../domain/usecases/search_location_usecase.dart';
 
 class SearchProvider with ChangeNotifier {
   final SearchUsersUseCase _searchUsersUseCase;
   final GetUsersUseCase _getUsersUseCase;
+  final SearchLocationUseCase _searchLocationUseCase;
+
   List<User> _initialUsers = [];
   List<User> _searchedUsers = [];
   bool _isLoading = false;
   bool _isSearching = false;
+  bool _isSearchingByLocation = false;
 
-  SearchProvider({required SearchUsersUseCase searchUsersUseCase, required GetUsersUseCase getUsersUseCase})
-      : _searchUsersUseCase = searchUsersUseCase,
-        _getUsersUseCase = getUsersUseCase {
+  SearchProvider({
+    required SearchUsersUseCase searchUsersUseCase,
+    required GetUsersUseCase getUsersUseCase,
+    required SearchLocationUseCase searchLocationUseCase,
+  })  : _searchUsersUseCase = searchUsersUseCase,
+        _getUsersUseCase = getUsersUseCase,
+        _searchLocationUseCase = searchLocationUseCase {
     loadInitialUsers(page: 1, perPage: 20);
   }
 
@@ -35,13 +42,12 @@ class SearchProvider with ChangeNotifier {
     }
   }
 
-  void updateSearchQuery(String query) {
+  void updateSearchQuery(String query, {required bool byLocation}) {
     if (query.isEmpty) {
-      _isSearching = false;
-      _searchedUsers = [];
-      notifyListeners();
+      clearSearch();
     } else {
       _isSearching = true;
+      _isSearchingByLocation = byLocation;
       searchUsers(query: query);
     }
   }
@@ -51,7 +57,11 @@ class SearchProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _searchedUsers = await _searchUsersUseCase(query: query);
+      if (_isSearchingByLocation) {
+        _searchedUsers = await _searchLocationUseCase(query: query);
+      } else {
+        _searchedUsers = await _searchUsersUseCase(query: query);
+      }
     } catch (e) {
       _searchedUsers = [];
     } finally {
@@ -62,7 +72,8 @@ class SearchProvider with ChangeNotifier {
 
   void clearSearch() {
     _isSearching = false;
+    _isSearchingByLocation = false;
     _searchedUsers = [];
-    notifyListeners();
+    loadInitialUsers(page: 1, perPage: 20);
   }
 }
