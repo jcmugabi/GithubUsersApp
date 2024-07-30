@@ -6,7 +6,19 @@ class GetUsersUseCase {
 
   GetUsersUseCase({required this.repository});
 
-  Future<List<User>> call({required int page, required int perPage}) {
-    return repository.getUsers(page: page, perPage: perPage);
+  Future<List<User>> call({
+    required int page,
+    required int perPage,
+    String? query,
+    String? filterType,
+    String? location,
+  }) async {
+    return await repository.getUsers(
+      page: page,
+      perPage: perPage,
+      query: query,
+      filterType: filterType,
+      location: location,
+    );
   }
 }
