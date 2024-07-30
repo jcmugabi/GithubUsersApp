@@ -1,6 +1,5 @@
 import '../../domain/entities/user.dart';
 
-// Data model representing user data as received from the GitHub API.
 class GithubUserModel {
   final String login;
   final String avatarUrl;
@@ -20,7 +19,6 @@ class GithubUserModel {
     required this.bio,
   });
 
-  // Factory method to create a GithubUserModel from JSON.
   factory GithubUserModel.fromJson(Map<String, dynamic> json) {
     return GithubUserModel(
       login: json['login'],
@@ -33,7 +31,6 @@ class GithubUserModel {
     );
   }
 
-  // Converts this model to a User entity.
   User toEntity() {
     return User(
       login: login,

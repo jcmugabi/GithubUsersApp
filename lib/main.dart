@@ -35,11 +35,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Github Users App- Uganda',
+      title: 'Github Users App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scrollbarTheme: ScrollbarThemeData(
-          thumbColor: WidgetStateProperty.all(const Color(0xFF000080)), // Navy Blue
+          thumbColor: WidgetStateProperty.all(const Color(0xFF000080)),
           thickness: WidgetStateProperty.all(6.0),
           radius: const Radius.circular(10),
         ),

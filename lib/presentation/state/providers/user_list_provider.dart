@@ -7,7 +7,7 @@ class UserListProvider with ChangeNotifier {
   final GetUsersUseCase _getUsersUseCase;
   final PagingController<int, User> _pagingController = PagingController(firstPageKey: 0);
 
-  List<User> _searchedUsers = [];
+  List<User> _searchedUsers = [ ];
   bool _isLoading = false;
   bool _isSearching = false;
 
