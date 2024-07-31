@@ -1,28 +1,31 @@
-import 'package:GithubUsersApp/data/remote/api_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'data/remote/api_data.dart';
+import 'domain/usecases/get_user_details_usecase.dart';
+import 'domain/usecases/get_users_usecase.dart';
+import 'data/repositories/user_repository_impl.dart';
 import 'presentation/state/providers/internet_connection_provider.dart';
 import 'presentation/state/providers/user_details_provider.dart';
 import 'presentation/state/providers/user_list_provider.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/users_screen.dart';
 import 'presentation/screens/user_details_screen.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'domain/usecases/get_user_details_usecase.dart';
-import 'domain/usecases/get_users_usecase.dart';
-import 'data/repositories/user_repository_impl.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => InternetConnectionProvider(Connectivity())),
-        ChangeNotifierProvider(create: (_) => UserDetailsProvider(
-          getUserDetailsUseCase: GetUserDetailsUseCase(repository: UserRepositoryImpl(apiData)),
-        )),
-        ChangeNotifierProvider(create: (_) => UserListProvider(
-          getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl(apiData)),
-        )),
+        ChangeNotifierProvider(create: (_) => InternetConnectionProvider()),
+        ChangeNotifierProvider(
+          create: (_) => UserDetailsProvider(
+            getUserDetailsUseCase: GetUserDetailsUseCase(repository: UserRepositoryImpl(apiData)),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => UserListProvider(
+            getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl(apiData)),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),

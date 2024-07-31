@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
+import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_card.dart';
 import '../state/providers/internet_connection_provider.dart';
 import '../state/providers/user_list_provider.dart';
@@ -62,7 +63,7 @@ class _UsersScreenState extends State<UsersScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => connectivityProvider.getFeedbackCard(),
+        builder: (context) => NoInternetFeedback(),
       );
     }
   }
@@ -130,7 +131,7 @@ class _UsersScreenState extends State<UsersScreen> {
           if (!connectivityProvider.isConnected)
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: connectivityProvider.getFeedbackCard(),
+              child: NoInternetFeedback(),
             ),
           Expanded(
             child: Scrollbar(

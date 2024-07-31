@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../domain/entities/user.dart';
 import '../state/providers/internet_connection_provider.dart';
 import '../state/providers/user_details_provider.dart';
+import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_details_card.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -36,7 +37,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => connectivityProvider.getFeedbackCard(),
+        builder: (context) => NoInternetFeedback(),
       );
     }
   }
@@ -82,7 +83,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 if (!connectivityProvider.isConnected)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: connectivityProvider.getFeedbackCard(),
+                    child: NoInternetFeedback(),
                   ),
                 UserDetailsCard(user: user),
               ],
