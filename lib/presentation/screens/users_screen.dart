@@ -63,7 +63,7 @@ class _UsersScreenState extends State<UsersScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => NoInternetFeedback(),
+        builder: (context) => const NoInternetFeedback(),
       );
     }
   }
@@ -155,8 +155,8 @@ class _UsersScreenState extends State<UsersScreen> {
           ),
 
           if (!connectivityProvider.isConnected)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: NoInternetFeedback(),
             ),
           Expanded(

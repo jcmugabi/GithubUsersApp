@@ -37,7 +37,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => NoInternetFeedback(),
+        builder: (context) => const NoInternetFeedback(),
       );
     }
   }
@@ -81,8 +81,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               padding: const EdgeInsets.all(16.0),
               children: [
                 if (!connectivityProvider.isConnected)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: NoInternetFeedback(),
                   ),
                 UserDetailsCard(user: user),

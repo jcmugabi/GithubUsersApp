@@ -53,10 +53,10 @@ class UserDetailsCard extends StatelessWidget {
           onPressed: () {
             (Uri.parse('https://github.com/${user.login}'));
           },
-          child: const Text('VISIT GITHUB PROFILE'),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF000080),
           ),
+          child: const Text('VISIT GITHUB PROFILE'),
         ),
         const SizedBox(height: 16),
         Row(
