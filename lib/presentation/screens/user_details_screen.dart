@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../domain/entities/user.dart';
 import '../state/providers/internet_connection_provider.dart';
 import '../state/providers/user_details_provider.dart';
+import '../widgets/no_internet_feedback_card.dart';
+import '../widgets/user_details_card.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -35,11 +37,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => connectivityProvider.getFeedbackCard(),
+        builder: (context) => NoInternetFeedback(),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +50,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Details'),
+        title: const Text('Profile'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () async {
-              final userDetailsProvider = Provider.of<UserDetailsProvider>(context, listen: false);
               final user = await userDetailsProvider.fetchUserDetails(username);
               if (user != null) {
                 Share.share('Check out this GitHub user: github.com/${user.login}');
@@ -63,7 +63,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
         ],
       ),
-        body: FutureBuilder<User?>(
+      body: FutureBuilder<User?>(
         future: userDetailsProvider.fetchUserDetails(username),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -75,39 +75,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           }
 
           final user = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          return Container(
+            color: const Color(0xFFF0F0F0),
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
               children: [
                 if (!connectivityProvider.isConnected)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: connectivityProvider.getFeedbackCard(),
+                    child: NoInternetFeedback(),
                   ),
-                Center(
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(user.avatarUrl),
-                    radius: 50,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Center(
-                  child: Text(
-                    user.login,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text('Name: ${user.name}'),
-                const SizedBox(height: 8),
-                Text('Followers: ${user.followers}'),
-                const SizedBox(height: 8),
-                Text('Following: ${user.following}'),
-                const SizedBox(height: 8),
-                Text('Type: ${user.type}'),
-                const SizedBox(height: 8),
-                Text('Bio: ${user.bio}'),
+                UserDetailsCard(user: user),
               ],
             ),
           );

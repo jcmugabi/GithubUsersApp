@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-class InternetConnectionProvider with ChangeNotifier {
-  final Connectivity _connectivity;
-  bool _isConnected = true;
+class InternetConnectionProvider extends ChangeNotifier {
+  ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  bool _isConnected = false;
 
-  InternetConnectionProvider(this._connectivity) {
-    _connectivity.onConnectivityChanged.listen((status) {
-      _isConnected = status != ConnectivityResult.none;
-      notifyListeners();
+  InternetConnectionProvider() {
+    _checkConnectivity();
+    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
+      _updateConnectionStatus(results.first);
     });
   }
 
   bool get isConnected => _isConnected;
 
-  Widget getFeedbackCard() {
-    return !_isConnected
-        ? const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text('No internet connection'),
-      ),
-    )
-        : Container();
+  Future<void> _checkConnectivity() async {
+    final ConnectivityResult result = (await Connectivity().checkConnectivity()).first;
+    _updateConnectionStatus(result);
+  }
+
+
+  void _updateConnectionStatus(ConnectivityResult result) {
+    _connectivityResult = result;
+    _isConnected = _connectivityResult != ConnectivityResult.none;
+    notifyListeners();
   }
 }

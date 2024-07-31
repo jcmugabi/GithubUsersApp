@@ -1,6 +1,7 @@
 import '../entities/user.dart';
 import '../repositories/user_repository.dart';
 
+
 class GetUserDetailsUseCase {
   final UserRepository repository;
 

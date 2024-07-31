@@ -1,1 +1,0 @@
-//to have to internet connection card
