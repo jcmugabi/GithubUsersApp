@@ -1,3 +1,4 @@
+import 'package:GithubUsersApp/data/remote/api_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/state/providers/internet_connection_provider.dart';
@@ -17,16 +18,18 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => InternetConnectionProvider(Connectivity())),
         ChangeNotifierProvider(create: (_) => UserDetailsProvider(
-          getUserDetailsUseCase: GetUserDetailsUseCase(repository: UserRepositoryImpl()),
+          getUserDetailsUseCase: GetUserDetailsUseCase(repository: UserRepositoryImpl(apiData)),
         )),
         ChangeNotifierProvider(create: (_) => UserListProvider(
-          getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl()),
+          getUsersUseCase: GetUsersUseCase(repository: UserRepositoryImpl(apiData)),
         )),
       ],
       child: const MyApp(),
     ),
   );
 }
+
+final apiData = ApiData();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

@@ -4,7 +4,9 @@ import '../models/github_user_model.dart';
 import '../remote/api_data.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  final ApiData apiData = ApiData();
+  final ApiData apiData;
+
+  UserRepositoryImpl(this.apiData);
 
   @override
   Future<List<User>> getUsers({
