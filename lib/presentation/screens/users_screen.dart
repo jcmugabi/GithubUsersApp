@@ -93,41 +93,67 @@ class _UsersScreenState extends State<UsersScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          labelText: 'Search by user name',
-                          border: OutlineInputBorder(),
-                        ),
+                Stack(
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        labelText: 'Search by user name',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: _locationController,
-                        decoration: const InputDecoration(
-                          labelText: 'Search by location',
-                          border: OutlineInputBorder(),
-                        ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          final userProvider = Provider.of<UserListProvider>(context, listen: false);
+                          userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
+                          setState(() {
+                            isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                          });
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    _locationController.clear();
-                    userProvider.clearSearch();
-                    userProvider.pagingController.refresh();
-                  },
+                const SizedBox(height: 8),
+                Stack(
+                  children: [
+                    TextField(
+                      controller: _locationController,
+                      decoration: const InputDecoration(
+                        labelText: 'Search by location',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _locationController.clear();
+                          final userProvider = Provider.of<UserListProvider>(context, listen: false);
+                          userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
+                          setState(() {
+                            isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
+
           if (!connectivityProvider.isConnected)
             Padding(
               padding: const EdgeInsets.all(16.0),
