@@ -50,9 +50,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF000080),
-        foregroundColor: const Color(0xFFFFFFFF),
-        title: const Text('Profile'),
+        backgroundColor: const Color(0xFFffffff),
+        foregroundColor: const Color(0xFF000000),
+        title: const Text('Profile',
+            style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),

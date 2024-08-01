@@ -82,17 +82,18 @@ class _UsersScreenState extends State<UsersScreen> {
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFffffff),
       appBar: AppBar(
         title: const Text(
           'Github Users',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF000080),
+        backgroundColor: const Color(0xFFffffff),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 Stack(
@@ -176,7 +177,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   return GestureDetector(
                     onTap: () => _onUserTap(user),
                     child: Padding (
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                     child: UserCard(user: user),
                     ),
                   );
@@ -188,7 +189,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
                     child: Padding (
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: UserCard(user: user),
                     ),
                   ),

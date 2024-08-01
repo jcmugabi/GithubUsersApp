@@ -10,13 +10,15 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      // color: Colors.grey[250],
+      color: const Color(0xFFe6e6e6),
       child: Padding(
         padding: const EdgeInsets.all(6.0),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(user.avatarUrl),
         ),
-        title: Text(user.login, style: AppStyles.bodyText),
+        title: Text(user.login, style: const TextStyle(fontSize: 20)),
       ),
       ),
     );

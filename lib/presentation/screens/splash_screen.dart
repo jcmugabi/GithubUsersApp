@@ -29,16 +29,23 @@ class _SplashScreenState extends State<SplashScreen> {
               Text(
                 'Github Users',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: AppColors.backgroundColor,
                 ),
               ),
+              // SizedBox(
+              //   width: 100, // Set the width
+              //   height: 100, // Set the height
+              //   child: Image(
+              //     image: AssetImage('assets/logo.png'),
+              //   ),
+              // ),
               SizedBox(height: 16),
               Text(
                 'Everywhere!',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   color: AppColors.backgroundColor,
                 ),
               ),

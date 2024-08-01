@@ -16,15 +16,15 @@ class UserDetailsCard extends StatelessWidget {
         Stack(
           children: [
             CustomPaint(
-              size: Size(MediaQuery.of(context).size.width, 225),
+              size: Size(MediaQuery.of(context).size.width, 175),
               painter: ArcPainter(),
             ),
             Positioned(
               top: 25,
-              left: MediaQuery.of(context).size.width / 2 - 100,
+              left: MediaQuery.of(context).size.width / 2 - 75,
               child: CircleAvatar(
                 backgroundImage: NetworkImage(user.avatarUrl),
-                radius: 100,
+                radius: 75,
               ),
             ),
           ],
@@ -37,9 +37,16 @@ class UserDetailsCard extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           user.login,
-          style: const TextStyle(fontSize: 18, color: Color(0xFF000080)),
+          style: const TextStyle(fontSize: 18, color: Color(0xFF000000)),
         ),
-        const SizedBox(height: 16),
+        SizedBox(
+          height: 1,
+          width: MediaQuery.of(context).size.width * 0.85,
+          child: Container(
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 20),
         ...[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -56,7 +63,7 @@ class UserDetailsCard extends StatelessWidget {
             launchUrlInBrowser('https://github.com/${user.login}');
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF000080),
+            backgroundColor: const Color(0xFF000000),
             foregroundColor: const Color(0xFFFFFFFF,)
           ),
           child: const Text('VISIT GITHUB PROFILE'),
@@ -84,7 +91,7 @@ class UserDetailsCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 16, color: Color(0xFF000080)),
+          style: const TextStyle(fontSize: 16, color: Color(0xFF000000)),
         ),
       ],
     );
@@ -95,7 +102,7 @@ class ArcPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF000080)
+      ..color = const Color(0xFFffffff)
       ..style = PaintingStyle.fill;
 
     final path = Path()
