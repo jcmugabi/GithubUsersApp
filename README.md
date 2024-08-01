@@ -4,7 +4,7 @@ A Flutter application that displays users all over the world and allows users to
 ## Introduction
 The GitHub Users App is designed to provide a simple and efficient way to search for GitHub users by username or location. It retrieves user data from the GitHub API and displays it in a user-friendly manner. The application demonstrates state management with the use of providers. It is structured following Clean Architecture principles to ensure maintainability and scalability.
 
-Features
+## Features
 - Search Functionality: Search for GitHub users by username or location.
 - User Details: View detailed information about a specific user.
 - Internet Connectivity Handling: Detect and handle changes in internet connectivity, with prompts to guide users when offline.
@@ -45,6 +45,7 @@ Instructions on how to run the app on an emulator or a physical device:
    ```
    
 ## Usage
+- Diplaying github users all over the globe
 - Search: Use the search fields to find GitHub users by username or location.
 - View Details: Tap on a user to view their details.
 - Internet Connectivity: If there is no internet connection, a dialog will appear prompting you to turn on your internet connection.
@@ -53,9 +54,12 @@ Instructions on how to run the app on an emulator or a physical device:
 
 ![splash screen](./screen_shots/splash_screen.png)
 ![home screen](./screen_shots/users_screen.png)
-![search username screen](./screen_shots/search_username.png)
+![search username screen](./screen_shots/search_user.png)
 ![search location screen](./screen_shots/search_location.png)
 ![user details screen](./screen_shots/user_details_screen.png)
+![share view](./screen_shots/share_details.png)
+![no internet view](./screen_shots/no_internet.png)
+
 
 
 ## Contributing
