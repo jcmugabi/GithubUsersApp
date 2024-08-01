@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../domain/entities/user.dart';
 import '../state/providers/internet_connection_provider.dart';
 import '../state/providers/user_details_provider.dart';
+import '../theme/colours.dart';
 import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_details_card.dart';
 
@@ -50,10 +51,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFffffff),
-        foregroundColor: const Color(0xFF000000),
+        backgroundColor: AppColors.primaryColor,
+        foregroundColor: AppColors.backgroundColor,
         title: const Text('Profile',
-            style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),

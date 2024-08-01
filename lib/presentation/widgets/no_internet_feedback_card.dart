@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:android_intent_plus/android_intent.dart';
 
+import '../theme/colours.dart';
+
 class NoInternetFeedback extends StatelessWidget {
   const NoInternetFeedback({super.key});
 
@@ -40,8 +42,8 @@ class NoInternetFeedback extends StatelessWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFffffff),
-                foregroundColor: Color(0xFFFFFFFF),
+                backgroundColor: AppColors.primaryColor,
+                foregroundColor: AppColors.backgroundColor,
               ),
               onPressed: openSettings,
               child: const Text('Turn On'),

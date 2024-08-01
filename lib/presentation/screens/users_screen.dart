@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
+import '../theme/colours.dart';
 import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_card.dart';
 import '../state/providers/internet_connection_provider.dart';
@@ -24,16 +25,12 @@ class _UsersScreenState extends State<UsersScreen> {
     super.initState();
 
     _searchController.addListener(() {
-      final userProvider = Provider.of<UserListProvider>(context, listen: false);
-      userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
       });
     });
 
     _locationController.addListener(() {
-      final userProvider = Provider.of<UserListProvider>(context, listen: false);
-      userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
       });
@@ -76,19 +73,24 @@ class _UsersScreenState extends State<UsersScreen> {
     );
   }
 
+  void _performSearch() {
+    final userProvider = Provider.of<UserListProvider>(context, listen: false);
+    userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserListProvider>(context);
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFffffff),
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Github Users',
-          style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.backgroundColor, fontSize: 28, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFffffff),
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Column(
         children: [
@@ -100,6 +102,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   children: [
                     TextField(
                       controller: _searchController,
+                      onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
                         labelText: 'Search by user name',
                         border: OutlineInputBorder(),
@@ -128,6 +131,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   children: [
                     TextField(
                       controller: _locationController,
+                      onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
                         labelText: 'Search by location',
                         border: OutlineInputBorder(),
@@ -154,7 +158,6 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-
           if (!connectivityProvider.isConnected)
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -169,7 +172,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   ? userProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : userProvider.searchedUsers.isEmpty
-                  ? const Center(child: Text('No users found'))
+                  ? const Center(child: Text('No users..'))
                   : ListView.builder(
                 itemCount: userProvider.searchedUsers.length,
                 itemBuilder: (context, index) {
@@ -178,7 +181,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     onTap: () => _onUserTap(user),
                     child: Padding (
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                    child: UserCard(user: user),
+                      child: UserCard(user: user),
                     ),
                   );
                 },

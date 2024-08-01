@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/user.dart';
+import '../theme/colours.dart';
 import '../utils/url_launcher.dart';
 
 class UserDetailsCard extends StatelessWidget {
@@ -39,11 +40,12 @@ class UserDetailsCard extends StatelessWidget {
           user.login,
           style: const TextStyle(fontSize: 18, color: Color(0xFF000000)),
         ),
+        const SizedBox(height: 20),
         SizedBox(
           height: 1,
           width: MediaQuery.of(context).size.width * 0.85,
           child: Container(
-            color: Colors.grey,
+            color: AppColors.primaryColor,
           ),
         ),
         const SizedBox(height: 20),
@@ -63,7 +65,7 @@ class UserDetailsCard extends StatelessWidget {
             launchUrlInBrowser('https://github.com/${user.login}');
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF000000),
+            backgroundColor: AppColors.primaryColor,
             foregroundColor: const Color(0xFFFFFFFF,)
           ),
           child: const Text('VISIT GITHUB PROFILE'),
@@ -91,7 +93,7 @@ class UserDetailsCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 16, color: Color(0xFF000000)),
+          style: const TextStyle(fontSize: 16, color: AppColors.primaryColor),
         ),
       ],
     );
@@ -102,7 +104,7 @@ class ArcPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFffffff)
+      ..color = AppColors.primaryColor
       ..style = PaintingStyle.fill;
 
     final path = Path()

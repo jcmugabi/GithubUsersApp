@@ -11,7 +11,8 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       // color: Colors.grey[250],
-      color: const Color(0xFFe6e6e6),
+      // color: Colors.blue[50],
+      color: const Color(0xFFececff),
       child: Padding(
         padding: const EdgeInsets.all(6.0),
       child: ListTile(
