@@ -92,7 +92,7 @@ class _UsersScreenState extends State<UsersScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
                 Stack(
@@ -175,7 +175,10 @@ class _UsersScreenState extends State<UsersScreen> {
                   final user = userProvider.searchedUsers[index];
                   return GestureDetector(
                     onTap: () => _onUserTap(user),
+                    child: Padding (
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                     child: UserCard(user: user),
+                    ),
                   );
                 },
               )
@@ -184,7 +187,10 @@ class _UsersScreenState extends State<UsersScreen> {
                 builderDelegate: PagedChildBuilderDelegate<User>(
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: UserCard(user: user),
+                    child: Padding (
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      child: UserCard(user: user),
+                    ),
                   ),
                 ),
               ),

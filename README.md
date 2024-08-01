@@ -54,11 +54,11 @@ Instructions on how to run the app on an emulator or a physical device:
 
 ![splash screen](./screen_shots/splash_screen.png)
 ![home screen](./screen_shots/users_screen.png)
-![search username screen](./screen_shots/search_user.png)
+![search username screen](./screen_shots/search_username.png)
 ![search location screen](./screen_shots/search_location.png)
 ![user details screen](./screen_shots/user_details_screen.png)
-![share view](./screen_shots/share_details.png)
-![no internet view](./screen_shots/no_internet.png)
+![share view](./screen_shots/share_details_view.png)
+![no internet view](./screen_shots/no_internet_view.png)
 
 
 

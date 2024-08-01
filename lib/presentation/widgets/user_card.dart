@@ -10,11 +10,14 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(user.avatarUrl),
         ),
         title: Text(user.login, style: AppStyles.bodyText),
+      ),
       ),
     );
   }

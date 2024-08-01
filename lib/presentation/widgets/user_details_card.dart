@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+// import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/user.dart';
+import '../utils/url_launcher.dart';
 
 class UserDetailsCard extends StatelessWidget {
   final User user;
@@ -14,28 +16,28 @@ class UserDetailsCard extends StatelessWidget {
         Stack(
           children: [
             CustomPaint(
-              size: Size(MediaQuery.of(context).size.width, 150),
+              size: Size(MediaQuery.of(context).size.width, 225),
               painter: ArcPainter(),
             ),
             Positioned(
-              top: 50,
-              left: MediaQuery.of(context).size.width / 2 - 50,
+              top: 25,
+              left: MediaQuery.of(context).size.width / 2 - 100,
               child: CircleAvatar(
                 backgroundImage: NetworkImage(user.avatarUrl),
-                radius: 50,
+                radius: 100,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 70),
+        const SizedBox(height: 45),
         Text(
           user.name,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           user.login,
-          style: const TextStyle(fontSize: 18, color: Colors.grey),
+          style: const TextStyle(fontSize: 18, color: Color(0xFF000080)),
         ),
         const SizedBox(height: 16),
         ...[
@@ -47,18 +49,19 @@ class UserDetailsCard extends StatelessWidget {
             style: const TextStyle(fontSize: 16),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
       ],
         ElevatedButton(
           onPressed: () {
-            (Uri.parse('https://github.com/${user.login}'));
+            launchUrlInBrowser('https://github.com/${user.login}');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF000080),
+            foregroundColor: const Color(0xFFFFFFFF,)
           ),
           child: const Text('VISIT GITHUB PROFILE'),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -76,12 +79,12 @@ class UserDetailsCard extends StatelessWidget {
       children: [
         Text(
           value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
+          style: const TextStyle(fontSize: 16, color: Color(0xFF000080)),
         ),
       ],
     );

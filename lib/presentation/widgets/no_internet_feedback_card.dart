@@ -39,6 +39,10 @@ class NoInternetFeedback extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF000080),
+                foregroundColor: Color(0xFFFFFFFF),
+              ),
               onPressed: openSettings,
               child: const Text('Turn On'),
             ),
