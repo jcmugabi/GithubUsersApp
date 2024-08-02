@@ -52,7 +52,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        foregroundColor: AppColors.backgroundColor,
+        foregroundColor: AppColors.headerTextColor,
         title: const Text('Profile',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         actions: [

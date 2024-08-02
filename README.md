@@ -51,13 +51,24 @@ Instructions on how to run the app on an emulator or a physical device:
 - Internet Connectivity: If there is no internet connection, a dialog will appear prompting you to turn on your internet connection.
 
 ## Screenshots
+Here are some of the application's screenshots
 
-![splash screen](./screen_shots/splash_screen.png)
+### Home screen
 ![home screen](./screen_shots/users_screen.png)
+
+### Search by username
 ![search username screen](./screen_shots/search_username.png)
+
+### Search by location
 ![search location screen](./screen_shots/search_location.png)
+
+### User details screen
 ![user details screen](./screen_shots/user_details_screen.png)
+
+### Share view
 ![share view](./screen_shots/share_details_view.png)
+
+### No internet view
 ![no internet view](./screen_shots/no_internet_view.png)
 
 
@@ -72,6 +83,8 @@ Guidelines for contributing to the project:
 5. Open a pull request
 
 ## Contact
-Email: josephcharlesmugabi@gmail.com
-GitHub: jcmugabi
-Twitter: @_mugabi_
+Kindly contact me via;
+
+- Email: josephcharlesmugabi@gmail.com
+- GitHub: jcmugabi
+- Twitter: @_mugabi_

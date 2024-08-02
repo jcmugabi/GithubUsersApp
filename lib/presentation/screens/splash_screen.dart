@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.backgroundColor,
+                  color: Colors.white,
                 ),
               ),
               // SizedBox(
@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 'Everywhere!',
                 style: TextStyle(
                   fontSize: 18,
-                  color: AppColors.backgroundColor,
+                  color: Colors.white,
                 ),
               ),
             ],

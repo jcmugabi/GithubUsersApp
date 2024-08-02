@@ -88,7 +88,7 @@ class _UsersScreenState extends State<UsersScreen> {
       appBar: AppBar(
         title: const Text(
           'Github Users',
-          style: TextStyle(color: AppColors.backgroundColor, fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.headerTextColor, fontSize: 28, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.primaryColor,
       ),
@@ -106,6 +106,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Search by user name',
                         border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
                       ),
                     ),
                     Positioned(
@@ -135,6 +136,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Search by location',
                         border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
                       ),
                     ),
                     Positioned(

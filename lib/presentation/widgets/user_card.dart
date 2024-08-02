@@ -12,14 +12,14 @@ class UserCard extends StatelessWidget {
     return Card(
       // color: Colors.grey[250],
       // color: Colors.blue[50],
-      color: const Color(0xFFececff),
+      color: const Color(0xFFf4f4ff),
       child: Padding(
         padding: const EdgeInsets.all(6.0),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(user.avatarUrl),
         ),
-        title: Text(user.login, style: const TextStyle(fontSize: 20)),
+        title: Text(user.login, style: const TextStyle(fontSize: 18)),
       ),
       ),
     );
