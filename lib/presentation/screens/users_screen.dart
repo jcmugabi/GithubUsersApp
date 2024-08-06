@@ -18,7 +18,10 @@ class UsersScreen extends StatefulWidget {
 class _UsersScreenState extends State<UsersScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  late InternetConnectionProvider _connectivityProvider;
   bool isSearching = false;
+  bool _dialogShown = false;
 
   @override
   void initState() {
@@ -35,33 +38,35 @@ class _UsersScreenState extends State<UsersScreen> {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
       });
     });
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
-      connectivityProvider.addListener(_checkConnectivity);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-      if (!connectivityProvider.isConnected) {
-        _checkConnectivity();
-      }
-    });
+    _connectivityProvider = Provider.of<InternetConnectionProvider>(context);
+    _connectivityProvider.addListener(_checkConnectivity);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _locationController.dispose();
-    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: false);
-    connectivityProvider.removeListener(_checkConnectivity);
+    _scrollController.dispose();
+    // Unsubscribe from connectivity changes
+    _connectivityProvider.removeListener(_checkConnectivity);
     super.dispose();
   }
 
   void _checkConnectivity() {
-    final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
-    if (!connectivityProvider.isConnected) {
+    if (!_connectivityProvider.isConnected && !_dialogShown) {
+      _dialogShown = true;
       showDialog(
         context: context,
         builder: (context) => const NoInternetFeedback(),
-      );
+      ).then((_) {
+        _dialogShown = false;
+      });
     }
   }
 
@@ -88,7 +93,7 @@ class _UsersScreenState extends State<UsersScreen> {
       appBar: AppBar(
         title: const Text(
           'Github Users',
-          style: TextStyle(color: AppColors.headerTextColor, fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.primaryColor,
       ),
@@ -106,7 +111,6 @@ class _UsersScreenState extends State<UsersScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Search by user name',
                         border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
                       ),
                     ),
                     Positioned(
@@ -117,7 +121,6 @@ class _UsersScreenState extends State<UsersScreen> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
-                          final userProvider = Provider.of<UserListProvider>(context, listen: false);
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
@@ -136,7 +139,6 @@ class _UsersScreenState extends State<UsersScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Search by location',
                         border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
                       ),
                     ),
                     Positioned(
@@ -147,7 +149,6 @@ class _UsersScreenState extends State<UsersScreen> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _locationController.clear();
-                          final userProvider = Provider.of<UserListProvider>(context, listen: false);
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
@@ -167,6 +168,7 @@ class _UsersScreenState extends State<UsersScreen> {
             ),
           Expanded(
             child: Scrollbar(
+              controller: _scrollController,
               thumbVisibility: true,
               thickness: 6.0,
               radius: const Radius.circular(10),
@@ -176,12 +178,13 @@ class _UsersScreenState extends State<UsersScreen> {
                   : userProvider.searchedUsers.isEmpty
                   ? const Center(child: Text('No users..'))
                   : ListView.builder(
+                controller: _scrollController,
                 itemCount: userProvider.searchedUsers.length,
                 itemBuilder: (context, index) {
                   final user = userProvider.searchedUsers[index];
                   return GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: Padding (
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: UserCard(user: user),
                     ),
@@ -190,10 +193,11 @@ class _UsersScreenState extends State<UsersScreen> {
               )
                   : PagedListView<int, User>(
                 pagingController: userProvider.pagingController,
+                scrollController: _scrollController,
                 builderDelegate: PagedChildBuilderDelegate<User>(
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: Padding (
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: UserCard(user: user),
                     ),
