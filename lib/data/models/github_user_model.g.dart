@@ -9,12 +9,12 @@ part of 'github_user_model.dart';
 GithubUserModel _$GithubUserModelFromJson(Map<String, dynamic> json) =>
     GithubUserModel(
       login: json['login'] as String,
-      avatarUrl: json['avatar_url'] as String,
-      name: json['name'] as String,
-      followers: json['followers'] as String,
-      following: json['following'] as String,
-      type: json['type'] as String,
-      bio: json['bio'] as String,
+      avatarUrl: json['avatar_url'] as String?,
+      name: json['name'] as String?,
+      followers: json['followers'] as String?,
+      following: json['following'] as String?,
+      type: json['type'] as String?,
+      bio: json['bio'] as String?,
     );
 
 Map<String, dynamic> _$GithubUserModelToJson(GithubUserModel instance) =>
