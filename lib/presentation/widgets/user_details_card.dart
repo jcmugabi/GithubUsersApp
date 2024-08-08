@@ -24,7 +24,7 @@ class UserDetailsCard extends StatelessWidget {
               top: 25,
               left: MediaQuery.of(context).size.width / 2 - 75,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(user.avatarUrl),
+                backgroundImage: NetworkImage(user.avatarUrl ?? ""),
                 radius: 75,
               ),
             ),
@@ -32,7 +32,7 @@ class UserDetailsCard extends StatelessWidget {
         ),
         const SizedBox(height: 45),
         Text(
-          user.name,
+          user.name ?? "",
           style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -53,7 +53,7 @@ class UserDetailsCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            user.bio,
+            user.bio ?? "",
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 16),
           ),
@@ -75,7 +75,7 @@ class UserDetailsCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildInfoColumn('FOLLOWERS', user.followers.toString()),
-            _buildInfoColumn('ACCOUNT', user.type),
+            _buildInfoColumn('ACCOUNT', user.type ?? ""),
             _buildInfoColumn('FOLLOWING', user.following.toString()),
           ],
         ),
@@ -120,3 +120,5 @@ class ArcPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
+//this

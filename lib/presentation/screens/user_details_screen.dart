@@ -45,6 +45,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       appBar: AppBar(
         title: const Text('Profile'),
         backgroundColor: AppColors.primaryColor,
+        foregroundColor: AppColors.headerTextColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -71,7 +72,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           return Container(
               color: const Color(0xFFF0F0F0),
               child: ListView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(0.0),
                   children: [
                   if (!connectivityProvider.isConnected)
           const Padding(

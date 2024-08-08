@@ -15,10 +15,12 @@ class UserDetailsProvider with ChangeNotifier {
     try {
       _userDetails = await _getUserDetailsUseCase(userId);
       notifyListeners();
+      print(_userDetails);
       return _userDetails;
     } catch (e) {
       _userDetails = null;
       notifyListeners();
+      print(e);
       return null;
     }
   }

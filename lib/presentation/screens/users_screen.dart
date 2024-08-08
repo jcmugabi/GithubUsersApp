@@ -7,26 +7,33 @@ import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_card.dart';
 import '../state/providers/internet_connection_provider.dart';
 import '../state/providers/user_list_provider.dart';
+
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
+
   @override
   _UsersScreenState createState() => _UsersScreenState();
 }
+
 class _UsersScreenState extends State<UsersScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   bool isSearching = false;
+  bool isSearchSubmitted = false;
+
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() {
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+        isSearchSubmitted = false;
       });
     });
     _locationController.addListener(() {
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+        isSearchSubmitted = false;
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,6 +44,7 @@ class _UsersScreenState extends State<UsersScreen> {
       }
     });
   }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -45,6 +53,7 @@ class _UsersScreenState extends State<UsersScreen> {
     connectivityProvider.removeListener(_checkConnectivity);
     super.dispose();
   }
+
   void _checkConnectivity() {
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
     if (!connectivityProvider.isConnected) {
@@ -54,6 +63,7 @@ class _UsersScreenState extends State<UsersScreen> {
       );
     }
   }
+
   void _onUserTap(User user) {
     Navigator.pushNamed(
       context,
@@ -61,14 +71,20 @@ class _UsersScreenState extends State<UsersScreen> {
       arguments: user.login,
     );
   }
+
   void _performSearch() {
     final userProvider = Provider.of<UserListProvider>(context, listen: false);
     userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
+    setState(() {
+      isSearchSubmitted = true;
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserListProvider>(context);
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -90,9 +106,9 @@ class _UsersScreenState extends State<UsersScreen> {
                       controller: _searchController,
                       onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
-                          labelText: 'Search by user name',
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
+                        labelText: 'Search by user name',
+                        border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12)),
                       ),
                     ),
                     Positioned(
@@ -107,6 +123,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                            isSearchSubmitted = false;
                           });
                         },
                       ),
@@ -120,9 +137,9 @@ class _UsersScreenState extends State<UsersScreen> {
                       controller: _locationController,
                       onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
-                          labelText: 'Search by location',
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12))
+                        labelText: 'Search by location',
+                        border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12)),
                       ),
                     ),
                     Positioned(
@@ -137,6 +154,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                            isSearchSubmitted = false;
                           });
                         },
                       ),
@@ -156,7 +174,7 @@ class _UsersScreenState extends State<UsersScreen> {
               thumbVisibility: true,
               thickness: 6.0,
               radius: const Radius.circular(10),
-              child: isSearching
+              child: isSearching && isSearchSubmitted
                   ? userProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : userProvider.searchedUsers.isEmpty
@@ -167,7 +185,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   final user = userProvider.searchedUsers[index];
                   return GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: Padding (
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: UserCard(user: user),
                     ),
@@ -179,7 +197,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 builderDelegate: PagedChildBuilderDelegate<User>(
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: Padding (
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: UserCard(user: user),
                     ),

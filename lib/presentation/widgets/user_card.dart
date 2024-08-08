@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/user.dart';
-import '../theme/styles.dart';
 
 class UserCard extends StatelessWidget {
   final User user;
@@ -17,7 +16,7 @@ class UserCard extends StatelessWidget {
         padding: const EdgeInsets.all(6.0),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(user.avatarUrl),
+          backgroundImage: NetworkImage(user.avatarUrl ?? ""),
         ),
         title: Text(user.login, style: const TextStyle(fontSize: 18)),
       ),
