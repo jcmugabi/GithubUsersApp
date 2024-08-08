@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../domain/entities/user.dart';
+import '../theme/colours.dart';
 import '../widgets/no_internet_feedback_card.dart';
 import '../widgets/user_card.dart';
 import '../state/providers/internet_connection_provider.dart';
@@ -18,31 +19,26 @@ class _UsersScreenState extends State<UsersScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   bool isSearching = false;
+  bool isSearchSubmitted = false;
 
   @override
   void initState() {
     super.initState();
-
     _searchController.addListener(() {
-      final userProvider = Provider.of<UserListProvider>(context, listen: false);
-      userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+        isSearchSubmitted = false;
       });
     });
-
     _locationController.addListener(() {
-      final userProvider = Provider.of<UserListProvider>(context, listen: false);
-      userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
       setState(() {
         isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+        isSearchSubmitted = false;
       });
     });
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivityProvider = Provider.of<InternetConnectionProvider>(context, listen: true);
       connectivityProvider.addListener(_checkConnectivity);
-
       if (!connectivityProvider.isConnected) {
         _checkConnectivity();
       }
@@ -63,7 +59,7 @@ class _UsersScreenState extends State<UsersScreen> {
     if (!connectivityProvider.isConnected) {
       showDialog(
         context: context,
-        builder: (context) => NoInternetFeedback(),
+        builder: (context) => const NoInternetFeedback(),
       );
     }
   }
@@ -76,18 +72,27 @@ class _UsersScreenState extends State<UsersScreen> {
     );
   }
 
+  void _performSearch() {
+    final userProvider = Provider.of<UserListProvider>(context, listen: false);
+    userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
+    setState(() {
+      isSearchSubmitted = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserListProvider>(context);
     final connectivityProvider = Provider.of<InternetConnectionProvider>(context);
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Github Users',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppColors.headerTextColor, fontSize: 28, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF000080),
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Column(
         children: [
@@ -99,9 +104,11 @@ class _UsersScreenState extends State<UsersScreen> {
                   children: [
                     TextField(
                       controller: _searchController,
+                      onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
                         labelText: 'Search by user name',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12)),
                       ),
                     ),
                     Positioned(
@@ -116,6 +123,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                            isSearchSubmitted = false;
                           });
                         },
                       ),
@@ -127,9 +135,11 @@ class _UsersScreenState extends State<UsersScreen> {
                   children: [
                     TextField(
                       controller: _locationController,
+                      onSubmitted: (_) => _performSearch(),
                       decoration: const InputDecoration(
                         labelText: 'Search by location',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black12)),
                       ),
                     ),
                     Positioned(
@@ -144,6 +154,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           userProvider.updateSearchQuery(_searchController.text, location: _locationController.text);
                           setState(() {
                             isSearching = _searchController.text.isNotEmpty || _locationController.text.isNotEmpty;
+                            isSearchSubmitted = false;
                           });
                         },
                       ),
@@ -153,10 +164,9 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-
           if (!connectivityProvider.isConnected)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: NoInternetFeedback(),
             ),
           Expanded(
@@ -164,18 +174,21 @@ class _UsersScreenState extends State<UsersScreen> {
               thumbVisibility: true,
               thickness: 6.0,
               radius: const Radius.circular(10),
-              child: isSearching
+              child: isSearching && isSearchSubmitted
                   ? userProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : userProvider.searchedUsers.isEmpty
-                  ? const Center(child: Text('No users found'))
+                  ? const Center(child: Text('No users..'))
                   : ListView.builder(
                 itemCount: userProvider.searchedUsers.length,
                 itemBuilder: (context, index) {
                   final user = userProvider.searchedUsers[index];
                   return GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: UserCard(user: user),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                      child: UserCard(user: user),
+                    ),
                   );
                 },
               )
@@ -184,7 +197,10 @@ class _UsersScreenState extends State<UsersScreen> {
                 builderDelegate: PagedChildBuilderDelegate<User>(
                   itemBuilder: (context, user, index) => GestureDetector(
                     onTap: () => _onUserTap(user),
-                    child: UserCard(user: user),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                      child: UserCard(user: user),
+                    ),
                   ),
                 ),
               ),

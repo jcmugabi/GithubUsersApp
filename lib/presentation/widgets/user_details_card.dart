@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+// import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/user.dart';
+import '../theme/colours.dart';
+import '../utils/url_launcher.dart';
 
 class UserDetailsCard extends StatelessWidget {
   final User user;
@@ -14,56 +17,65 @@ class UserDetailsCard extends StatelessWidget {
         Stack(
           children: [
             CustomPaint(
-              size: Size(MediaQuery.of(context).size.width, 150),
+              size: Size(MediaQuery.of(context).size.width, 175),
               painter: ArcPainter(),
             ),
             Positioned(
-              top: 50,
-              left: MediaQuery.of(context).size.width / 2 - 50,
+              top: 25,
+              left: MediaQuery.of(context).size.width / 2 - 75,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(user.avatarUrl),
-                radius: 50,
+                backgroundImage: NetworkImage(user.avatarUrl ?? ""),
+                radius: 75,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 70),
+        const SizedBox(height: 45),
         Text(
-          user.name,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          user.name ?? "",
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           user.login,
-          style: const TextStyle(fontSize: 18, color: Colors.grey),
+          style: const TextStyle(fontSize: 18, color: Color(0xFF000000)),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 1,
+          width: MediaQuery.of(context).size.width * 0.85,
+          child: Container(
+            color: AppColors.primaryColor,
+          ),
+        ),
+        const SizedBox(height: 20),
         ...[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            user.bio,
+            user.bio ?? "",
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 16),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
       ],
         ElevatedButton(
           onPressed: () {
-            (Uri.parse('https://github.com/${user.login}'));
+            launchUrlInBrowser('https://github.com/${user.login}');
           },
-          child: const Text('VISIT GITHUB PROFILE'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF000080),
+            backgroundColor: AppColors.primaryColor,
+            foregroundColor: const Color(0xFFFFFFFF,)
           ),
+          child: const Text('VISIT GITHUB PROFILE'),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildInfoColumn('FOLLOWERS', user.followers.toString()),
-            _buildInfoColumn('ACCOUNT', user.type),
+            _buildInfoColumn('ACCOUNT', user.type ?? ""),
             _buildInfoColumn('FOLLOWING', user.following.toString()),
           ],
         ),
@@ -76,12 +88,12 @@ class UserDetailsCard extends StatelessWidget {
       children: [
         Text(
           value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
+          style: const TextStyle(fontSize: 16, color: AppColors.primaryColor),
         ),
       ],
     );
@@ -92,7 +104,7 @@ class ArcPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF000080)
+      ..color = AppColors.primaryColor
       ..style = PaintingStyle.fill;
 
     final path = Path()
@@ -108,3 +120,5 @@ class ArcPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
+//this

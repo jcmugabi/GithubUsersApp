@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:android_intent_plus/android_intent.dart';
 
+import '../theme/colours.dart';
+
 class NoInternetFeedback extends StatelessWidget {
   const NoInternetFeedback({super.key});
 
@@ -34,13 +36,17 @@ class NoInternetFeedback extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             const Text(
-              'Please check your internet connection and try again.',
+              'Please check your internet connection in settings and try again.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                foregroundColor: AppColors.headerTextColor,
+              ),
               onPressed: openSettings,
-              child: const Text('Turn On'),
+              child: const Text('Settings'),
             ),
           ],
         ),

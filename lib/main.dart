@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scrollbarTheme: ScrollbarThemeData(
-          thumbColor: WidgetStateProperty.all(const Color(0xFF000080)),
+          thumbColor: WidgetStateProperty.all(const Color(0xFFffffff)),
           thickness: WidgetStateProperty.all(6.0),
           radius: const Radius.circular(10),
         ),
