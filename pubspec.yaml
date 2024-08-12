@@ -32,14 +32,14 @@ dependencies:
     sdk: flutter
   http: ^1.2.1
   provider: ^6.1.0
-  share: ^2.0.4
+  share_plus: ^10.0.1
   infinite_scroll_pagination: ^4.0.0
   connectivity_plus: ^6.0.3
   open_settings_plus: ^0.3.3
   open_settings: ^2.0.2
   android_intent_plus: ^5.0.2
   android_intent: ^2.0.0
-  url_launcher: ^6.0.17
+  url_launcher: ^6.3.0
   device_info_plus: ^9.0.0
   json_annotation: ^4.9.0
 

@@ -1,6 +1,6 @@
 import 'package:GithubUsersApp/presentation/theme/colours.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:provider/provider.dart';
 import '../../domain/entities/user.dart';
 import '../state/providers/internet_connection_provider.dart';
