@@ -1,3 +1,4 @@
+import 'package:GithubUsersApp/injector.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../domain/entities/user.dart';
@@ -12,7 +13,7 @@ class UserListProvider with ChangeNotifier {
   bool _isSearching = false;
 
   UserListProvider({required GetUsersUseCase getUsersUseCase})
-      : _getUsersUseCase = getUsersUseCase {
+      : _getUsersUseCase = injector<GetUsersUseCase>() {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
