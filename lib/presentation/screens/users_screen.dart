@@ -178,7 +178,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   ? userProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : userProvider.searchedUsers.isEmpty
-                  ? const Center(child: Text('No users..'))
+                  ? const Center(child: Text('No users found.'))
                   : ListView.builder(
                 itemCount: userProvider.searchedUsers.length,
                 itemBuilder: (context, index) {

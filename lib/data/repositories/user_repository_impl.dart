@@ -1,12 +1,11 @@
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/user_repository.dart';
+import '../../injector.dart';
 import '../models/github_user_model.dart';
 import '../remote/api_data.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  final ApiData apiData;
-
-  UserRepositoryImpl(this.apiData);
+  final ApiData apiData = injector<ApiData>();
 
   @override
   Future<List<User>> getUsers({

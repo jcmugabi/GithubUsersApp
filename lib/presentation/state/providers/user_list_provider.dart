@@ -1,3 +1,4 @@
+import 'package:GithubUsersApp/injector.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../domain/entities/user.dart';
@@ -7,12 +8,12 @@ class UserListProvider with ChangeNotifier {
   final GetUsersUseCase _getUsersUseCase;
   final PagingController<int, User> _pagingController = PagingController(firstPageKey: 0);
 
-  List<User> _searchedUsers = [ ];
+  List<User> _searchedUsers = [];
   bool _isLoading = false;
   bool _isSearching = false;
 
   UserListProvider({required GetUsersUseCase getUsersUseCase})
-      : _getUsersUseCase = getUsersUseCase {
+      : _getUsersUseCase = injector<GetUsersUseCase>() {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
@@ -25,24 +26,32 @@ class UserListProvider with ChangeNotifier {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Fetching users from use case
       final newItems = await _getUsersUseCase(page: pageKey, perPage: 20);
       final isLastPage = newItems.length < 20;
+
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
       } else {
-        final nextPageKey = pageKey + newItems.length;
+        final nextPageKey = pageKey + 1; // Incrementing by 1 to get next page
         _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
+
   @override
   void dispose() {
     _pagingController.dispose();
     super.dispose();
   }
-
 
   void updateSearchQuery(String query, {String? location}) {
     if (query.isEmpty && (location == null || location.isEmpty)) {

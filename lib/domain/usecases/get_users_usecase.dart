@@ -1,10 +1,9 @@
+import '../../injector.dart';
 import '../entities/user.dart';
 import '../repositories/user_repository.dart';
 
 class GetUsersUseCase {
-  final UserRepository repository;
-
-  GetUsersUseCase({required this.repository});
+  final UserRepository repository = injector<UserRepository>();
 
   Future<List<User>> call({
     required int page,
